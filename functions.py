@@ -4,6 +4,9 @@ def get_page_source():
     #TODO: add better documentation
     """
 
+
+
+
     from selenium import webdriver
     from webdriver_manager.chrome import ChromeDriverManager
     import time # for interaction latency
@@ -85,9 +88,10 @@ def get_lyrics(hits, artists):
     genius = lyricsgenius.Genius(token)
 
     lyrics = []
-
+    
     for hit, artist in zip(hits, artists):
         lyrics.append(genius.search_song(hit, artist).lyrics)
+         time.sleep(15)
 
     return lyrics
 
