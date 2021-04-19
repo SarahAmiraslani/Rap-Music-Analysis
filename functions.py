@@ -1,3 +1,6 @@
+
+
+
 def get_page_source(): 
 
     """ 
@@ -80,6 +83,7 @@ def get_lyrics(hits, artists):
 
     """
     import lyricsgenius
+    import time
     import getpass # could be useful if we dont want our genius token to be public on github
 
     #TODO: consider using getpass to protect our API token
@@ -91,7 +95,7 @@ def get_lyrics(hits, artists):
     
     for hit, artist in zip(hits, artists):
         lyrics.append(genius.search_song(hit, artist).lyrics)
-         time.sleep(15)
+        time.sleep(15)
 
     return lyrics
 
@@ -159,6 +163,17 @@ def get_song_info(hits):
         hits_info.append(r['response'])
 
     return hits_info
+
+def results_csv(df_hits):
+    # file naming/ path convention:
+    csv_path = '/results_csv/'
+    df_hits_time = str(df_hits['Date'][0])
+    csv_name = df_hits_time + current_datetime_str + '.csv' 
+    
+    # export dataframe:
+    df_hits.to_csv(csv_path+csv_name, encoding='utf-8')
+    
+
 
 # TODO: we should get comments and page views
 # TODO: create a quick diagram to see how functions interact with each other
