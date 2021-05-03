@@ -166,6 +166,8 @@ def get_song_info(hits):
 
 def results_csv(df_hits):
     # file naming/ path convention:
+    import datetime
+    current_datetime_str = str(datetime.datetime.now())
     csv_path = '/results_csv/'
     df_hits_time = str(df_hits['Date'][0])
     csv_name = df_hits_time + current_datetime_str + '.csv' 
