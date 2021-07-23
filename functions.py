@@ -1,31 +1,29 @@
 
-
+# TODO: get historical data for songs
 
 def get_page_source(): 
 
     """ 
     #TODO: add better documentation
     """
-
-
-
-
     from selenium import webdriver
     from webdriver_manager.chrome import ChromeDriverManager
     import time # for interaction latency
-
+    #TODO: consider css selector approach for find_elements_by_xpath
+    
     # Using Chrome to acess web
     driver = webdriver.Chrome(ChromeDriverManager().install())
 
     # Open the website
     driver.get("https://genius.com/#top-songs")
 
-    #TODO: consider css selector approach for find_elements_by_xpath
-    # Setting up the page for scraping
+    # Setting up the page for scraping, we need to load top 50 and choose the rap genre
+    
+    # Set up top 50 songs
     drop_down = driver.find_elements_by_xpath('//*[@id="top-songs"]/div/div[2]/div/div/div[1]/div')[0]
     drop_down.click()
     time.sleep(3)
-
+    
     rap_button = driver.find_elements_by_xpath('//*[@id="top-songs"]/div/div[2]/div/div/div[2]/div[2]/div[3]/div')[0]
     rap_button.click()
     time.sleep(5)
@@ -165,15 +163,28 @@ def get_song_info(hits):
     return hits_info
 
 def results_csv(df_hits):
+    """
+    
+    """
+    
+    from datetime import datetime
+    import os
+     
+    current_datetime_str = datetime.today().strftime('%m/%d/%Y')
+    
+    repo = os.getcwd()
+    csv_path = 'results_csv'
+    
+    if csv_path not in os.listdir():
+        os.mkdir(repo +os.sep + csv_path)
     # file naming/ path convention:
-    csv_path = '/results_csv/'
+    
     df_hits_time = str(df_hits['Date'][0])
     csv_name = df_hits_time + current_datetime_str + '.csv' 
     
     # export dataframe:
-    df_hits.to_csv(csv_path+csv_name, encoding='utf-8')
+    df_hits.to_csv(csv_path + os.sep + csv_name, encoding='utf-8')
     
 
 
 # TODO: we should get comments and page views
-# TODO: create a quick diagram to see how functions interact with each other
