@@ -1,3 +1,7 @@
+# utility
+from datetime import datetime
+import re
+
 # web crawling
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -5,103 +9,121 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
-# parsing page contents
-from bs4 import BeautifulSoup
-
-# utility
-from datetime import datetime
-import re
-
-class rap_driver(object):
-    dd_xpath:str ='//*[@id="top-songs"]/div/div[2]/div/div/div[1]/div'
-    rap_xpath:str = '//*[@id="top-songs"]/div/div[2]/div/div/div[2]/div[2]/div[3]/div'
-    load_css:str ="div[class^='SquareButton-sc']"
-
-    def __init__(self,song_num):
-        self.num_last_page:int = divmod(song_num,10)[-1]
-        self.num_pages:int = round(song_num/10)
 
 
-    def get_page_source(self):
+def get_html(num_songs:int)->str:
+	"""[summary]
 
-        '''
-        Navigating
-        '''
-        # use Chrome to acess web
-        driver = webdriver.Chrome(ChromeDriverManager().install())
+	Args:
+		num_songs ([int]): number of songs to get lyrics for from the site.
 
-        # navigare to the website
-        driver.get("https://genius.com/#top-songs")
-        driver.maximize_window()
+	Returns:
+		[str]: html
+	"""
 
-        '''
-        Page interactions
-        '''
+	# TODO: I don't think tab is a good name for this
+	tabs = num_songs//10
+	if num_songs%10 != 0:
+		tabs+=1
 
-        # click on drop down once it is clickable
-        _ = WebDriverWait(driver,30).until(
-            EC.element_to_be_clickable((By.XPATH,rap_driver.dd_xpath))
-            )
-        drop_down = driver.find_elements_by_xpath(rap_driver.dd_xpath)[0]
-        drop_down.click()
+	# prepare xpaths
+	top_songs_xpath = '//*[@id="top-songs"]/div/div[2]/div/div/'
+	dd_xpath = top_songs_xpath + 'div[1]/div'
+	rap_xpath = top_songs_xpath + 'div[2]/div[2]/div[3]/div'
+	load_css = "div[class^='SquareButton-sc']"
 
-        # click on rap button once it is clickable
-        _ = WebDriverWait(driver,30).until(
-            EC.element_to_be_clickable((By.XPATH,rap_driver.rap_xpath))
-            )
-        rap_button = driver.find_elements_by_xpath(rap_driver.rap_xpath)[0]
-        rap_button.click()
+	# ------------------- Navigating -------------------------------------------
 
-        # load more songs (10 at a time) until requested number of songs reached
-        counter=0
-        while counter < self.num_pages:
-            #todo: IS THERE ARE A REASON WE ARE USING CSS AND NOT XPATH
-            _ = WebDriverWait(driver,30).until(
-            EC.element_to_be_clickable((By.XPATH,rap_driver.load_css))
-            )
-            load_more = driver.find_element_by_css_selector(rap_driver.load_css)
-            load_more.click()
+	# initilaize chrome driver
+	driver = webdriver.Chrome(ChromeDriverManager().install())
 
-        '''
-        Getting page html
-        '''
-        html = driver.page_source
+	# navigate to website
+	driver.get("https://genius.com/#top-songs")
+	driver.maximize_window() #TODO: in the future headless browser would be better
 
-        driver.quit()
+	# ------------- Page interactions ------------------------------------------
 
-        return html
+	# click on drop down once it is clickable, timeout if not clickable in 30s
+	WebDriverWait(driver,30).until(
+		EC.element_to_be_clickable((By.XPATH,dd_xpath))
+		)
+	drop_down = driver.find_elements_by_xpath(dd_xpath)[0]
+	drop_down.click()
 
-    def parse_page(html):
+	# click on rap button once it is clickable, timeout if not clickable in 30s
+	WebDriverWait(driver,30).until(
+		EC.element_to_be_clickable((By.XPATH,rap_xpath))
+		)
+	rap_button = driver.find_elements_by_xpath(rap_xpath)[0]
+	rap_button.click()
 
-        # parse html page
-        soup = BeautifulSoup(html,'html.parser')
+	# load more songs (10 at a time) until requested number of songs reached
+	counter=0
+	while counter < tabs:
+		#todo: IS THERE ARE A REASON WE ARE USING CSS AND NOT XPATH
+		# load an extra tab, timeout if not clickable in 30s
+		WebDriverWait(driver,30).until(
+		EC.element_to_be_clickable((By.XPATH,load_css))
+		)
+		load_more = driver.find_element_by_css_selector(load_css)
+		load_more.click()
 
-        # find the div where id == "top-songs"
-        songs = soup.find("div",{"id":"top-songs"})
+		counter += 1
 
-        # get song title, artist, and links to song lyrics page
-        hits = [hit.get_text() for hit in BeautifulSoup.findAll(
-            songs, attrs={
-                'class': re.compile('^ChartSongdesktop__Title-sc.*')
-                }
-            )
-                ]
-        artists = [artist.get_text() for artist in BeautifulSoup.findAll(
-            songs, attrs={
-                'class': re.compile('^ChartSongdesktop__Artist-sc.*')
-                }
-            )
-                ]
-        links = [link['href'] for link in songs.find_all(
-            'a', href=True
-            )
-                ]
+	'''
+	Getting page html
+	'''
+	html = driver.page_source
 
-        # TODO: create rank and return
-        #todo: this doesn't seem like the best approach, can just use numpy
-        rank = list(range(1,len()))
+	driver.quit()
 
-        # we multiply by len(lyrics) so that the lyrics and datetimes arrays are the same shape
-        datetimes = [datetime.now().isoformat(timespec='hours')]*len(hits)
+	return html
 
-        return hits, artists, links, rank, datetimes
+
+
+# class rap_driver(object):
+
+#     dd_xpath:str ='//*[@id="top-songs"]/div/div[2]/div/div/div[1]/div'
+#     rap_xpath:str = '//*[@id="top-songs"]/div/div[2]/div/div/div[2]/div[2]/div[3]/div'
+#     load_css:str ="div[class^='SquareButton-sc']"
+
+#     def __init__(self,song_num):
+#         self.num_last_page:int = divmod(song_num,10)[-1]
+#         self.num_pages:int = round(song_num/10)
+
+
+
+#     def parse_page(html):
+
+#         # parse html page
+#         soup = BeautifulSoup(html,'html.parser')
+
+#         # find the div where id == "top-songs"
+#         songs = soup.find("div",{"id":"top-songs"})
+
+#         # get song title, artist, and links to song lyrics page
+#         hits = [hit.get_text() for hit in BeautifulSoup.findAll(
+#             songs, attrs={
+#                 'class': re.compile('^ChartSongdesktop__Title-sc.*')
+#                 }
+#             )
+#                 ]
+#         artists = [artist.get_text() for artist in BeautifulSoup.findAll(
+#             songs, attrs={
+#                 'class': re.compile('^ChartSongdesktop__Artist-sc.*')
+#                 }
+#             )
+#                 ]
+#         links = [link['href'] for link in songs.find_all(
+#             'a', href=True
+#             )
+#                 ]
+
+#         # TODO: create rank and return
+#         #todo: this doesn't seem like the best approach, can just use numpy
+#         rank = list(range(1,len(hits)))
+
+#         # we multiply by len(lyrics) so that the lyrics and datetimes arrays are the same shape
+#         datetimes = [datetime.now().isoformat(timespec='hours')]*len(hits)
+
+#         return hits, artists, links, rank, datetimes
