@@ -12,15 +12,7 @@ from bs4 import BeautifulSoup
 
 # TODO: add type hints
 
-def parse_page(html: str) -> list:
-    """[summary]
-
-    Args:
-        html ([str]): [description]
-
-    Returns:
-        [list]: [description]
-    """
+def parse_page(html: str) -> list[list[str]]:
 
     # parse entire html page
     soup = BeautifulSoup(html, "html.parser")
@@ -44,28 +36,16 @@ def parse_page(html: str) -> list:
 
     # get links to the genius page for each top song
     links = [link["href"] for link in songs.find_all("a", href=True)]
+    rank = [i for i, _ in enumerate(hits)]
 
-    # TODO: create rank and return
-    #TODO: can probably use range for this
-    rank = [i for i, hit in enumerate(hits)]
-
-    # we multiply by len(lyrics) so that the lyrics and datetimes arrays are the same shape
+    # multiply by len(lyrics) so lyrics and datetimes arrays are the same shape
     datetimes = [datetime.now().isoformat(timespec="hours")] * len(hits)
 
     return [hits, artists, links, rank, datetimes]
 
 
 
-def get_lyrics(hits:list, artists:list)-> list:
-    """[summary]
-
-    Args:
-        hits (list): [description]
-        artists (list): [description]
-
-    Returns:
-        list: [description]
-    """
+def get_lyrics(hits:list[str], artists:list[str])-> list[str]:
 
     token = os.environ.get('genius_token')
     genius = lyricsgenius.Genius(token)
@@ -79,39 +59,22 @@ def get_lyrics(hits:list, artists:list)-> list:
 
 
 def clean_lyrics(lyrics:list)-> list:
-    """[summary]
 
-    Args:
-        lyrics (list): [description]
-
-    Returns:
-        list: [description]
-    """
-
+    NotImplementedError
 
     return lyrics
 
 
 def clean_comments(comments:list)-> list:
-    """[summary]
 
-    Args:
-        lyrics (list): [description]
-
-    Returns:
-        list: [description]
-    """
+    NotImplementedError
 
     return comments
 
 
 def get_artist_info(arists):
-    """
-    # TODO: add better documentation
-    """
 
     base_url = "https://api.genius.com/search"
-    #TODO: set this to env vars
     headers = {"Authorization": "Bearer " + TOKEN}
 
     artist_info = []

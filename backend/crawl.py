@@ -37,9 +37,10 @@ def get_html(num_songs:int)->str:
 	# initilaize chrome driver
 	driver = webdriver.Chrome(ChromeDriverManager().install())
 
+	#TODO: headless browser would be better
 	# navigate to website
 	driver.get("https://genius.com/#top-songs")
-	driver.maximize_window() #TODO: in the future headless browser would be better
+	driver.maximize_window()
 
 	# ------------- Page interactions ------------------------------------------
 
@@ -60,7 +61,7 @@ def get_html(num_songs:int)->str:
 	# load more songs (10 at a time) until requested number of songs reached
 	counter=0
 	while counter < tabs:
-		#todo: IS THERE ARE A REASON WE ARE USING CSS AND NOT XPATH
+		#TODO: is there a reason to use css and not xpath
 		# load an extra tab, timeout if not clickable in 30s
 		WebDriverWait(driver,30).until(
 		EC.element_to_be_clickable((By.XPATH,load_css))

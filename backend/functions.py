@@ -23,14 +23,6 @@ TOKEN = "F4xSKCMmA7mpolFgbIrdAPPBw67u6ae_p19dSs0rqDcZNrhBSzVt9hMn5Xan0_aq"
 
 
 def get_page_source(song_num: int) -> str:
-    """[summary]
-
-    Args:
-        song_num ([type]): [description]
-
-    Returns:
-        NoReturn: [description]
-    """
 
     # TODO: consider css selector approach for find_elements_by_xpath
 
@@ -73,14 +65,6 @@ def get_page_source(song_num: int) -> str:
 
 
 def parse_page(html: str) -> list:
-    """[summary]
-
-    Args:
-        html ([str]): [description]
-
-    Returns:
-        [list]: [description]
-    """
 
     # parsing the entire html page, creates BS4 object
     soup = BeautifulSoup(html, "html.parser")
@@ -113,7 +97,6 @@ def parse_page(html: str) -> list:
     datetimes = [datetime.now().isoformat(timespec="hours")] * len(hits)
 
     return [hits, artists, links, rank, datetimes]
-
 
 
 def get_lyrics(hits:list, artists:list)-> list:
@@ -161,7 +144,7 @@ def clean_comments(comments:list)-> list:
     Returns:
         list: [description]
     """
-    
+
     return comments
 
 
@@ -209,7 +192,6 @@ def get_song_info(hits):
 
 
 def results_csv(df_hits):
-    """ """
 
     current_datetime_str = datetime.today().strftime("%m/%d/%Y")
 
