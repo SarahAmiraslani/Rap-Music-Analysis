@@ -12,6 +12,8 @@ from bs4 import BeautifulSoup
 
 # TODO: add type hints
 
+# ==== Get Data ====
+
 def parse_page(html: str) -> list[list[str]]:
 
     # parse entire html page
@@ -44,32 +46,18 @@ def parse_page(html: str) -> list[list[str]]:
     return [hits, artists, links, rank, datetimes]
 
 
+def get_lyrics(token:str,hits:list[str], artists:list[str])-> list[str]:
 
-def get_lyrics(hits:list[str], artists:list[str])-> list[str]:
-
-    token = os.environ.get('genius_token')
+    # create lyrics genius object
     genius = lyricsgenius.Genius(token)
 
+    # for each song artist combination
     lyrics = []
     for hit, artist in zip(hits, artists):
         lyrics.append(genius.search_song(hit, artist).lyrics)
         time.sleep(15)
 
     return lyrics
-
-
-def clean_lyrics(lyrics:list)-> list:
-
-    NotImplementedError
-
-    return lyrics
-
-
-def clean_comments(comments:list)-> list:
-
-    NotImplementedError
-
-    return comments
 
 
 def get_artist_info(arists):
@@ -86,3 +74,24 @@ def get_artist_info(arists):
         artist_info.append(r["response"])
 
     return artist_info
+
+
+def get_comments():
+
+    raise NotImplementedError
+
+
+# ==== Clean Data ====
+
+def clean_lyrics(lyrics:list)-> list:
+
+    NotImplementedError
+
+    return lyrics
+
+
+def clean_comments(comments:list)-> list:
+
+    NotImplementedError
+
+    return comments
