@@ -19,8 +19,6 @@ from bs4 import BeautifulSoup
 
 # TODO: get historical data for songs
 
-TOKEN = "F4xSKCMmA7mpolFgbIrdAPPBw67u6ae_p19dSs0rqDcZNrhBSzVt9hMn5Xan0_aq"
-
 
 def get_page_source(song_num: int) -> str:
 
@@ -99,96 +97,8 @@ def parse_page(html: str) -> list:
     return [hits, artists, links, rank, datetimes]
 
 
-def get_lyrics(hits:list, artists:list)-> list:
-    """[summary]
-
-    Args:
-        hits (list): [description]
-        artists (list): [description]
-
-    Returns:
-        list: [description]
-    """
-
-    token = "F4xSKCMmA7mpolFgbIrdAPPBw67u6ae_p19dSs0rqDcZNrhBSzVt9hMn5Xan0_aq"
-    genius = lyricsgenius.Genius(token)
-
-    lyrics = []
-    for hit, artist in zip(hits, artists):
-        lyrics.append(genius.search_song(hit, artist).lyrics)
-        time.sleep(15)
-
-    return lyrics
 
 
-def clean_lyrics(lyrics:list)-> list:
-    """[summary]
-
-    Args:
-        lyrics (list): [description]
-
-    Returns:
-        list: [description]
-    """
-
-
-    return lyrics
-
-
-def clean_comments(comments:list)-> list:
-    """[summary]
-
-    Args:
-        lyrics (list): [description]
-
-    Returns:
-        list: [description]
-    """
-
-    return comments
-
-
-def get_artist_info(arists):
-    """
-    # TODO: add better documentation
-    """
-
-    base_url = "https://api.genius.com/search"
-    #TODO: set this to env vars
-    headers = {"Authorization": "Bearer " + TOKEN}
-
-    artist_info = []
-    for artist in arists:
-        params = {"q": str(artist)}
-        r = requests.get(base_url, params=params, headers=headers)
-        r = json.loads(r.text)
-
-        artist_info.append(r["response"])
-
-    return artist_info
-
-
-def get_song_info(hits):
-    """
-    # TODO: add better documentation
-
-    """
-
-    # TODO: make this more robust so that it gets the right song even when there
-    # are multiple songs with the same name
-
-    base_url = "https://api.genius.com/search"
-    headers = {"Authorization": "Bearer " + TOKEN}
-
-    hits_info = []
-    for hit in hits:
-        params = {"q": str(hit)}
-        r = requests.get(base_url, params=params, headers=headers)
-        r = json.loads(r.text)
-
-        hits_info.append(r["response"])
-
-    return hits_info
 
 
 def results_csv(df_hits):

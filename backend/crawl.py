@@ -1,3 +1,5 @@
+# utility functions
+from datetime import datetime
 
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -7,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 
-def get_html(n_songs:int)->str:
+def get_html(n_songs:int,genre:str)->dict:
 	"""Get HTML data from genius for a specified (n_num) number of songs.
 	Args:
 		num_songs ([int]): number of songs to get lyrics for from the site.
@@ -15,7 +17,15 @@ def get_html(n_songs:int)->str:
 		[str]: html of page, not parsed
 	"""
 
-	# calculate the n of pages to open given that Genius displays 10 songs per page
+	# serves as our data dict
+	d = {}
+
+	# save the datetime of scraping
+    # multiply by len(n_songs) so dt arrays have the same shape as other data
+	datetimes = [datetime.now().isoformat(timespec="hours")] * len(n_songs)
+	d['datetimes']=datetimes
+
+	# calculate the number of pages to open given that the UI displays 10 songs per page
 	pages = n_songs//10
 
 	# if n_songs is not a multiple of 10, add 1 to page count
@@ -25,8 +35,15 @@ def get_html(n_songs:int)->str:
 	# prepare xpaths
 	top_songs_xpath = '//*[@id="top-songs"]/div/div[2]/div/div/'
 	dd_xpath = top_songs_xpath + 'div[1]/div'
-	rap_xpath = top_songs_xpath + 'div[2]/div[2]/div[3]/div'
 	load_css = "div[class^='SquareButton-sc']"
+
+	if genre == 'rap':
+		genre_xpath = top_songs_xpath + 'div[2]/div[2]/div[3]/div'
+	elif genre == 'pop':
+		genre_xpath = NotImplementedError
+	elif genre == 'r&b':
+		rap_xpath = NotImplementedError
+
 
 	# ==== Navigating ====
 
@@ -49,7 +66,7 @@ def get_html(n_songs:int)->str:
 
 	# click on rap button once it is clickable, timeout if not clickable in 30s
 	WebDriverWait(driver,30).until(
-		EC.element_to_be_clickable((By.XPATH,rap_xpath))
+		EC.element_to_be_clickable((By.XPATH,genre_xpath))
 		)
 	rap_button = driver.find_elements_by_xpath(rap_xpath)[0]
 	rap_button.click()
@@ -70,9 +87,9 @@ def get_html(n_songs:int)->str:
 	# ==== save page html and stop driver ====
 
 	html = driver.page_source
+	d['html'] = html
 
 	# close the browser
 	driver.quit()
 
-	return html
-
+	return d

@@ -1,1 +1,7 @@
-# Rap-Music-Analysis
+# Popular-Music-Analysis
+
+## Motivation
+---
+
+
+

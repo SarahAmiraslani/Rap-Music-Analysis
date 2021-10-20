@@ -1,6 +1,3 @@
-# TODO:add secrets and .DS_Store to gitignore
-
-
-from backend import crawl
+from backend import crawl, parse
 
 html = crawl.get_html()
