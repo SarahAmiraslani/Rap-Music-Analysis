@@ -24,9 +24,8 @@ def parse_html(html: str) -> list[list[str]]:
 
     # ==== Parse and Save Data ====
 
-    # finds the div where id = "top-songs", add songs to d
+    # finds the div where id = "top-songs"
     songs = soup.find("div", {"id": "top-songs"})
-    d['songs']=songs
 
     # get song title for each song, save to hits list
     hits = [
@@ -129,6 +128,9 @@ def get_song_info(hits):
     return hits_info
 
 
+def get_comments(hits):
+    NotImplementedError
+    
 # ==== Clean Data ====
 
 def clean_lyrics(lyrics:list)-> list:

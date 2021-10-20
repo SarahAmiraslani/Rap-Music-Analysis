@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 
-def get_html(n_songs:int,genre:str)->dict:
+def get_html(n_songs:int,genre:str='rap')->dict:
 	"""Get HTML data from genius for a specified (n_num) number of songs.
 	Args:
 		num_songs ([int]): number of songs to get lyrics for from the site.
@@ -19,11 +19,6 @@ def get_html(n_songs:int,genre:str)->dict:
 
 	# serves as our data dict
 	d = {}
-
-	# save the datetime of scraping
-    # multiply by len(n_songs) so dt arrays have the same shape as other data
-	datetimes = [datetime.now().isoformat(timespec="hours")] * len(n_songs)
-	d['datetimes']=datetimes
 
 	# calculate the number of pages to open given that the UI displays 10 songs per page
 	pages = n_songs//10
@@ -40,10 +35,13 @@ def get_html(n_songs:int,genre:str)->dict:
 	if genre == 'rap':
 		genre_xpath = top_songs_xpath + 'div[2]/div[2]/div[3]/div'
 	elif genre == 'pop':
-		genre_xpath = NotImplementedError
+		genre_xpath = top_songs_xpath + 'div[2]/div[2]/div[4]/div'
 	elif genre == 'r&b':
-		rap_xpath = NotImplementedError
-
+		genre_xpath = top_songs_xpath + 'div[2]/div[2]/div[5]/div'
+	elif genre == 'rock':
+		genre_xpath = top_songs_xpath + 'div[2]/div[2]/div[6]/div'
+	elif genre == 'country':
+		genre_xpath = top_songs_xpath + 'div[2]/div[2]/div[7]/div'
 
 	# ==== Navigating ====
 
@@ -68,7 +66,7 @@ def get_html(n_songs:int,genre:str)->dict:
 	WebDriverWait(driver,30).until(
 		EC.element_to_be_clickable((By.XPATH,genre_xpath))
 		)
-	rap_button = driver.find_elements_by_xpath(rap_xpath)[0]
+	rap_button = driver.find_elements_by_xpath(genre_xpath)[0]
 	rap_button.click()
 
 	# load more songs (10 at a time) until requested number of songs reached
