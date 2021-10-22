@@ -12,3 +12,8 @@
 
 - get data from today
 - consider using SQLAlchemy
+
+
+
+
+`!python -m spacy download en`
