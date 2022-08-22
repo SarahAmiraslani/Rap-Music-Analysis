@@ -8,7 +8,7 @@ environment you are running this script in.
 This file can also be imported as a module and contains the following
 function:
 
-    * get_html - returns html content of the requested genius page
+	* get_html - returns html content of the requested genius page
 """
 
 # utility
@@ -49,7 +49,7 @@ def get_html(n_songs:int,genre:str='rap')->dict:
 
 	# identify drop down menu xpath and load button xpath
 	# dd_xpath will be used to change genres, load_xpath to get more song data
- 	dd_xpath = id_songs + '/div/div[2]/div/div/div[1]'
+	dd_xpath = id_songs + '/div/div[2]/div/div/div[1]'
 	load_xpath = id_songs + '/div/div[4]/div'
 
 	# prepare genre xpath
@@ -97,8 +97,9 @@ def get_html(n_songs:int,genre:str='rap')->dict:
 	while counter < pages:
 		# click on load more button once clickable, timeout in 30s
   		WebDriverWait(driver,30).until(
-		EC.element_to_be_clickable((By.XPATH,load_xpath))
+			EC.element_to_be_clickable(By.XPATH,load_xpath)
 		)
+
 		load_more = driver.find_elements_by_xpath(load_xpath)
 		load_more.click()
 

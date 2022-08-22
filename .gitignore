@@ -135,3 +135,7 @@ dmypy.json
 secret.json
 
 .DS_Store
+
+__init__*
+testing.ipynb
+secret.py

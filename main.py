@@ -1,4 +1,4 @@
-from backend import crawl, parse
+import crawl, parse
 
 from datetime import datetime
 
